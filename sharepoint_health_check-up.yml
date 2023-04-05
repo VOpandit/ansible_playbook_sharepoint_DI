@@ -2,7 +2,9 @@
 - name: Execute PowerShell script with environment variables
   hosts: all
   gather_facts: false
-  vars:
+  vars: 
+        script_path: C:\monitor.ps1
+        script_url: https://github.com/VOpandit/ansible_playbook_sharepoint_DI.git
         server: "{{ inventory_hostname }}"
         load: "70"
         drive: "c"
@@ -17,8 +19,20 @@
         size: "50"
 
   tasks:
+    - name: Check if script exists
+      win_stat:
+        path: "{{ script_path }}"
+      register: script_status
+      failed_when: false
+
+    - name: Download script if needed
+      win_get_url:
+        url: "{{ script_url }}"
+        dest: "{{ script_path }}"
+      when: not script_status.stat.exists
+
     - name: Execute PowerShell script
-      win_shell: powershell.exe -ExecutionPolicy Bypass -File windows_monitors.ps1 -server {{server}} -load {{load}} -drive {{drive}} -freespace {{freespace}} -amount {{amount}} -servicename {{servicename}} -monitor {{monitor}} -process {{process}} -port {{port}} -disk {{disk}} -partition {{partition}} -size {{size}}
+      win_shell: powershell.exe -ExecutionPolicy Bypass -File {{script_path}} -server {{server}} -load {{load}} -drive {{drive}} -freespace {{freespace}} -amount {{amount}} -servicename {{servicename}} -monitor {{monitor}} -process {{process}} -port {{port}} -disk {{disk}} -partition {{partition}} -size {{size}}
       register: script_output
 
     - name: Print script output
