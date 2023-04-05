@@ -2,25 +2,23 @@
 - name: Execute PowerShell script with environment variables
   hosts: 'windows-inventory'
   gather_facts: false
-  tasks:
-    - name: Set environment variables
-      environment:
-        SERVER: "{{ inventory_hostname }}"
-        LOAD: "70"
-        DRIVE: "C"
-        FREESPACE: "10"
-        AMOUNT: "4000"
-        SERVICENAME: "SMA*"
-        MONITOR: "cpu"
-        PROCESS: "7zip"
-        PORT: "8181"
-        DISK: "0"
-        PARTITION: "1"
-        SIZE: "50"
-      become: yes
+  vars:
+        server: "{{ inventory_hostname }}"
+        load: "70"
+        drive: "c"
+        freespace: "10"
+        amount: "4000"
+        servicename: "sma*"
+        monitor: "cpu"
+        process: "7zip"
+        port: "8181"
+        disk: "0"
+        partition: "1"
+        size: "50"
 
+  tasks:
     - name: Execute PowerShell script
-      win_shell: powershell.exe -ExecutionPolicy Bypass -File C:\path\to\script.ps1 -server $env:SERVER -load $env:LOAD -drive $env:DRIVE -freespace $env:FREESPACE -amount $env:AMOUNT -servicename $env:SERVICENAME -monitor $env:MONITOR -process $env:PROCESS -port $env:PORT -disk $env:DISK -partition $env:PARTITION -size $env:SIZE
+      win_shell: powershell.exe -ExecutionPolicy Bypass -File windows_monitors.ps1 -server {{server}} -load {{load}} -drive {{drive}} -freespace {{freespace}} -amount {{amount}} -servicename {{servicename}} -monitor {{monitor}} -process {{process}} -port {{port}} -disk {{disk}} -partition {{partition}} -size {{size}}
       register: script_output
 
     - name: Print script output
