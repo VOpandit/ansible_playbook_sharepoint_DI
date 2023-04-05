@@ -1,6 +1,6 @@
 ---
 - name: Execute PowerShell script with environment variables
-  hosts: 'windows-inventory'
+  hosts: all
   gather_facts: false
   vars:
         server: "{{ inventory_hostname }}"
